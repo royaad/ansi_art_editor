@@ -51,6 +51,7 @@ header h1 {
   letter-spacing: -0.5px;
   font-weight: 600;
   background: linear-gradient(to right, #60a5fa, #a855f7);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -69,16 +70,28 @@ header h1 {
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.2);
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0 1.25rem;
+  height: 40px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+  font-size: 0.9rem;
   transition: all 0.2s;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  text-decoration: none;
 }
 
 .btn:hover {
   background: rgba(255,255,255,0.15);
+  transform: translateY(-1px);
+}
+
+.btn i {
+  font-size: 1rem;
 }
 
 .btn.primary {
@@ -88,6 +101,17 @@ header h1 {
 
 .btn.primary:hover {
   background: var(--accent-hover);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn.danger {
+  background: #ef4444;
+  border-color: transparent;
+}
+
+.btn.danger:hover {
+  background: #f87171;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 main {
@@ -120,8 +144,8 @@ main {
 }
 
 .terminal {
-  font-family: Consolas, "Fira Code", "Courier New", Courier, monospace;
-  font-size: 14px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
   line-height: 1;
   color: white;
   padding: 2rem;
@@ -133,7 +157,7 @@ main {
 
 .terminal > div.line {
   display: flex;
-  min-height: 14px;
+  min-height: 11px;
 }
 
 .terminal span {

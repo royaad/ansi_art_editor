@@ -6,15 +6,23 @@
   <title>ANSI Art Editor</title>
   <link rel="stylesheet" href="./style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="app-container">
     <header class="glass-panel">
       <h1>ANSI Art Editor</h1>
       <div class="actions">
-        <label for="file-upload" class="btn">Load .txt File</label>
+        <label for="file-upload" class="btn">
+          <i class="fas fa-file-upload"></i> Load .txt File
+        </label>
         <input type="file" id="file-upload" accept=".txt" />
-        <button id="download-btn" class="btn primary">Download ANSI</button>
+        <button id="reset-btn" class="btn danger">
+          <i class="fas fa-undo"></i> Reset Colors
+        </button>
+        <button id="download-btn" class="btn primary">
+          <i class="fas fa-download"></i> Download ANSI
+        </button>
       </div>
     </header>
     

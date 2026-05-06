@@ -197,6 +197,14 @@ const exportANSI = () => {
 
 document.getElementById('download-btn').addEventListener('click', exportANSI);
 
+document.getElementById('reset-btn').addEventListener('click', () => {
+  const spans = document.querySelectorAll('#editor span');
+  spans.forEach(span => {
+    span.style.color = '';
+    delete span.dataset.ansi;
+  });
+});
+
 // Pre-load pikachu.txt if available via dev server
 fetch('pikachu.txt')
   .then(response => {
