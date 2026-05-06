@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANSI Art Editor</title>
+  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="glass-panel">
+      <h1>ANSI Art Editor</h1>
+      <div class="actions">
+        <label for="file-upload" class="btn">Load .txt File</label>
+        <input type="file" id="file-upload" accept=".txt" />
+        <button id="download-btn" class="btn primary">Download ANSI</button>
+      </div>
+    </header>
+    
+    <main>
+      <div class="editor-container" id="drop-zone">
+        <div id="editor" class="terminal">
+          <div class="placeholder">Drag and drop a text file here or use "Load .txt File"...</div>
+        </div>
+      </div>
+      
+      <aside class="palette-container glass-panel">
+        <h2>Palette (Base + 256)</h2>
+        <div class="current-color-preview">
+          <div id="active-color-box" class="color-box" style="background-color: #ffffff"></div>
+          <span id="active-color-text">Active Color: #15</span>
+        </div>
+        <div id="palette" class="palette">
+          <!-- 256 colors will be appended here -->
+        </div>
+      </aside>
+    </main>
+  </div>
+  <script src="./main.js" type="module"></script>
+</body>
+</html>
