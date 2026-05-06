@@ -239,8 +239,8 @@ const updateZoom = (delta) => {
 document.getElementById('zoom-in').addEventListener('click', () => updateZoom(0.2));
 document.getElementById('zoom-out').addEventListener('click', () => updateZoom(-0.2));
 
-// Pre-load pikachu.txt if available via dev server
-fetch('pikachu.txt')
+// Pre-load default_load.txt if available via dev server
+fetch('default_load.txt')
   .then(response => {
     if (response.ok) return response.text();
     throw new Error('Fallback logic');

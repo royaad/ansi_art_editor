@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect x="1" y="1" width="30" height="30" rx="2" ry="2"
+        fill="white" stroke="black" stroke-width="2"/>
+
+  <!-- Left ASCII "A" -->
+  <rect x="6" y="9" width="2" height="8" fill="black"/>
+  <rect x="10" y="9" width="2" height="8" fill="black"/>
+  <rect x="8" y="9" width="2" height="2" fill="black"/>
+  <rect x="8" y="13" width="2" height="2" fill="black"/>
+
+  <!-- Separator -->
+  <rect x="15" y="7" width="2" height="18" fill="black"/>
+
+  <!-- Right ASCII face -->
+  <!-- Eyes -->
+  <rect x="19" y="11" width="2" height="2" fill="black"/>
+  <rect x="23" y="11" width="2" height="2" fill="black"/>
+
+  <!-- Mouth -->
+  <rect x="21" y="15" width="2" height="2" fill="black"/>
+  <rect x="19" y="17" width="6" height="2" fill="black"/>
+
+  <!-- Bottom command line -->
+  <rect x="6" y="23" width="20" height="2" fill="black"/>
+</svg>
