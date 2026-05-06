@@ -169,9 +169,9 @@ const exportANSI = () => {
 
       if (charColor !== currentColor) {
         if (charColor) {
-          result += `\\x1b[38;5;${charColor}m`;
-        } else if (currentColor) {
-          result += `\\x1b[0m`; // reset
+          result += `\x1b[38;5;${charColor}m`;
+        } else {
+          result += `\x1b[0m`; // reset
         }
         currentColor = charColor;
       }
@@ -180,7 +180,7 @@ const exportANSI = () => {
     });
 
     if (currentColor) {
-      result += `\\x1b[0m`; // reset at end of line if color is active
+      result += `\x1b[0m`; // reset at end of line
     }
     result += '\n'; // newline
   });
