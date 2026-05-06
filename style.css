@@ -156,14 +156,17 @@ main {
 }
 
 .terminal > div.line {
-  display: flex;
-  min-height: 11px;
+  height: 11px;
+  line-height: 11px;
 }
 
 .terminal span {
   display: inline-block;
+  width: 1ch;
+  height: 11px;
+  text-align: center;
+  vertical-align: top;
   cursor: crosshair;
-  min-width: 1ch;
 }
 
 .terminal span:hover {
