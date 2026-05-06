@@ -84,27 +84,50 @@ const renderText = (text) => {
     const lineContainer = document.createElement('div');
     lineContainer.className = 'line';
 
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      const span = document.createElement('span');
-      span.textContent = char;
-      // Default to white for visual, but we only output ANSI if explicitly set
-      // For now, no data-ansi attribute means "uncolored/default"
-      
-      span.addEventListener('mousedown', (e) => {
-        isPainting = true;
-        span.style.color = ansiColors[activeColorId];
-        span.dataset.ansi = activeColorId;
-      });
+    // Parse ANSI sequences per line
+    // This splits the line into text and ansi code matches alternately.
+    // e.g. "A\x1b[38;5;1mB" -> ["A", "38;5;1", "B"]
+    const parts = line.split(/\x1b\[([\d;]+)m/);
+    let currentColorId = null;
 
-      span.addEventListener('mouseover', (e) => {
-        if (isPainting) {
-          span.style.color = ansiColors[activeColorId];
-          span.dataset.ansi = activeColorId;
+    for (let i = 0; i < parts.length; i++) {
+      if (i % 2 === 1) {
+        // ANSI sequence matched block
+        const code = parts[i];
+        if (code === '0') {
+          currentColorId = null;
+        } else if (code.startsWith('38;5;')) {
+          currentColorId = parseInt(code.split(';')[2], 10);
         }
-      });
-      
-      lineContainer.appendChild(span);
+      } else {
+        // Text block
+        const textSegment = parts[i];
+        for (let j = 0; j < textSegment.length; j++) {
+          const char = textSegment[j];
+          const span = document.createElement('span');
+          span.textContent = char;
+          
+          if (currentColorId !== null) {
+            span.style.color = ansiColors[currentColorId];
+            span.dataset.ansi = parseInt(currentColorId, 10);
+          }
+
+          span.addEventListener('mousedown', (e) => {
+            isPainting = true;
+            span.style.color = ansiColors[activeColorId];
+            span.dataset.ansi = activeColorId;
+          });
+
+          span.addEventListener('mouseover', (e) => {
+            if (isPainting) {
+              span.style.color = ansiColors[activeColorId];
+              span.dataset.ansi = activeColorId;
+            }
+          });
+          
+          lineContainer.appendChild(span);
+        }
+      }
     }
     editorEl.appendChild(lineContainer);
   });
