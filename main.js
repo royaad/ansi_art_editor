@@ -205,6 +205,17 @@ document.getElementById('reset-btn').addEventListener('click', () => {
   });
 });
 
+let currentZoom = 1;
+const updateZoom = (delta) => {
+  currentZoom += delta;
+  currentZoom = Math.max(0.4, Math.min(currentZoom, 4.0)); // Clamp between 40% and 400%
+  document.getElementById('editor').style.setProperty('--zoom', currentZoom);
+  document.getElementById('zoom-level').textContent = `${Math.round(currentZoom * 100)}%`;
+};
+
+document.getElementById('zoom-in').addEventListener('click', () => updateZoom(0.2));
+document.getElementById('zoom-out').addEventListener('click', () => updateZoom(-0.2));
+
 // Pre-load pikachu.txt if available via dev server
 fetch('pikachu.txt')
   .then(response => {

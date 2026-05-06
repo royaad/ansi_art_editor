@@ -144,8 +144,9 @@ main {
 }
 
 .terminal {
+  --zoom: 1; /* Default zoom level */
   font-family: "Courier New", Courier, monospace;
-  font-size: 11px;
+  font-size: calc(11px * var(--zoom));
   line-height: 1;
   color: white;
   padding: 2rem;
@@ -156,17 +157,59 @@ main {
 }
 
 .terminal > div.line {
-  height: 11px;
-  line-height: 11px;
+  height: calc(11px * var(--zoom));
+  line-height: calc(11px * var(--zoom));
 }
 
 .terminal span {
   display: inline-block;
   width: 1ch;
-  height: 11px;
+  height: calc(11px * var(--zoom));
   text-align: center;
   vertical-align: top;
   cursor: crosshair;
+}
+
+.zoom-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.25rem;
+  border-radius: 8px;
+  gap: 0.5rem;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.zoom-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+#zoom-level {
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: #ccc;
+  min-width: 45px;
+  text-align: center;
 }
 
 .terminal span:hover {
