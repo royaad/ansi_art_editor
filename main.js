@@ -251,16 +251,25 @@ window.addEventListener('keydown', (e) => {
     return;
   }
 
-  // Edit Mode Specific Keys
-  if (currentMode === 'edit') {
-    if (e.key === ' ') {
-      e.preventDefault();
+  // Shared Spacebar handling with mode-specific behavior
+  if (e.key === ' ') {
+    e.preventDefault();
+    if (currentMode === 'edit') {
       const newSpan = createCharSpan('⠀');
       selectedSpan.after(newSpan);
-      
       // Selection advances to the right
       selectChar(newSpan);
-    } else if (e.key === 'Backspace') {
+    } else if (currentMode === 'color') {
+      // Apply color to current selection
+      selectedSpan.style.color = ansiColors[activeColorId];
+      selectedSpan.dataset.ansi = activeColorId;
+    }
+    return;
+  }
+
+  // Edit Mode Specific Keys
+  if (currentMode === 'edit') {
+    if (e.key === 'Backspace') {
       e.preventDefault();
       const toDelete = selectedSpan.previousElementSibling;
       if (toDelete && toDelete.tagName === 'SPAN') {
