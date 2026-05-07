@@ -3,6 +3,7 @@ let isPainting = false;
 let currentMode = 'color';
 let selectedSpan = null;
 let brailleData = null;
+let originalText = ''; // Store original content for resetting edits
 
 // ANSI 256 Colors List
 const getAnsiColors = () => {
@@ -306,11 +307,12 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-const renderText = (text) => {
+const renderText = (text, preservedColors = null) => {
   const editorEl = document.getElementById('editor');
   editorEl.innerHTML = ''; // clear
 
   const lines = text.split('\n');
+  let flatCharIndex = 0;
 
   lines.forEach((line) => {
     // Keep trailing empty lines intact without adding \r
@@ -323,8 +325,6 @@ const renderText = (text) => {
     lineContainer.className = 'line';
 
     // Parse ANSI sequences per line
-    // This splits the line into text and ansi code matches alternately.
-    // e.g. "A\x1b[38;5;1mB" -> ["A", "38;5;1", "B"]
     const parts = line.split(/\x1b\[([\d;]+)m/);
     let currentColorId = null;
 
@@ -342,8 +342,16 @@ const renderText = (text) => {
         const textSegment = parts[i];
         for (let j = 0; j < textSegment.length; j++) {
           const char = textSegment[j];
-          const span = createCharSpan(char, currentColorId);
+          
+          // Use preserved color if available, otherwise use either string's ANSI or null
+          let finalColorId = currentColorId;
+          if (preservedColors && flatCharIndex < preservedColors.length) {
+            finalColorId = preservedColors[flatCharIndex];
+          }
+          
+          const span = createCharSpan(char, finalColorId);
           lineContainer.appendChild(span);
+          flatCharIndex++;
         }
       }
     }
@@ -359,7 +367,8 @@ const setupDragAndDrop = () => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      renderText(e.target.result);
+      originalText = e.target.result;
+      renderText(originalText);
     };
     reader.readAsText(file);
   };
@@ -446,6 +455,22 @@ document.getElementById('reset-btn').addEventListener('click', () => {
   });
 });
 
+document.getElementById('reset-edits-btn').addEventListener('click', () => {
+  if (originalText) {
+    // Collect current colors
+    const currentColors = Array.from(document.querySelectorAll('#editor span')).map(s => {
+      return s.dataset.ansi !== undefined ? parseInt(s.dataset.ansi, 10) : null;
+    });
+
+    // Strip original string of its colors to avoid mixing
+    const rawText = originalText.replace(/\x1b\[[\d;]+m/g, '');
+    
+    renderText(rawText, currentColors);
+    selectedSpan = null;
+    updateEditPaletteState();
+  }
+});
+
 let currentZoom = 1;
 const updateZoom = (delta) => {
   currentZoom += delta;
@@ -463,7 +488,10 @@ fetch('default_load.txt')
     if (response.ok) return response.text();
     throw new Error('Fallback logic');
   })
-  .then(text => renderText(text))
+  .then(text => {
+    originalText = text;
+    renderText(text);
+  })
   .catch(err => {
     // Leave placeholder active
   });
