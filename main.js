@@ -1,3 +1,5 @@
+import brailleDataImport from './private/braille.json';
+
 let activeColorId = 15; // Set default white
 let isPainting = false;
 let currentMode = 'color';
@@ -70,15 +72,13 @@ const initPalette = () => {
   });
 };
 
-const initBraillePalette = async () => {
+const initBraillePalette = () => {
   const paletteEl = document.getElementById('braille-palette');
-  const statusEl = document.getElementById('selection-status');
+  if (!paletteEl) return;
   
-  try {
-    const response = await fetch('private/braille.json');
-    brailleData = await response.json();
-    
-    paletteEl.innerHTML = '';
+  brailleData = brailleDataImport;
+  
+  paletteEl.innerHTML = '';
     
     // Sort keys numerically
     const keys = Object.keys(brailleData).sort((a, b) => parseInt(a) - parseInt(b));
@@ -119,11 +119,6 @@ const initBraillePalette = async () => {
     });
     
     updateEditPaletteState();
-    
-  } catch (error) {
-    console.error('Failed to load braille data:', error);
-    paletteEl.innerHTML = '<div class="error">Failed to load Braille data.</div>';
-  }
 };
 
 const updateEditPaletteState = () => {
