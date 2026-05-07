@@ -43,14 +43,33 @@
       </div>
       
       <aside class="palette-container glass-panel">
-        <h2>Palette (Base + 256)</h2>
-        <div class="current-color-preview">
-          <div id="active-color-box" class="color-box" style="background-color: #ffffff"></div>
-          <span id="active-color-text">Active Color: #15</span>
+        <div class="palette-modes">
+          <button id="mode-color" class="mode-tab active" data-mode="color">Color</button>
+          <button id="mode-edit" class="mode-tab" data-mode="edit">Edit</button>
         </div>
-        <div class="palette-scroll">
-          <div id="palette" class="palette">
-            <!-- 256 colors will be appended here -->
+
+        <div id="color-mode-content" class="mode-content active">
+          <h2>Palette (Base + 256)</h2>
+          <div class="current-color-preview">
+            <div id="active-color-box" class="color-box" style="background-color: #ffffff"></div>
+            <span id="active-color-text">Active Color: #15</span>
+          </div>
+          <div class="palette-scroll">
+            <div id="palette" class="palette">
+              <!-- 256 colors will be appended here -->
+            </div>
+          </div>
+        </div>
+
+        <div id="edit-mode-content" class="mode-content">
+          <h2>Braille Characters</h2>
+          <div class="selection-status" id="selection-status">
+            Select a character in the display to edit
+          </div>
+          <div class="palette-scroll">
+            <div id="braille-palette" class="braille-palette">
+              <!-- Braille characters will be appended here -->
+            </div>
           </div>
         </div>
       </aside>

@@ -1,5 +1,8 @@
 let activeColorId = 15; // Set default white
 let isPainting = false;
+let currentMode = 'color';
+let selectedSpan = null;
+let brailleData = null;
 
 // ANSI 256 Colors List
 const getAnsiColors = () => {
@@ -42,8 +45,6 @@ const initPalette = () => {
   const paletteEl = document.getElementById('palette');
   paletteEl.innerHTML = ''; // Ensure clean start (e.g. if hot reloaded)
 
-  let titleAdded = { basic: false, cube: false, gray: false };
-
   ansiColors.forEach((hex, idx) => {
     if (idx === 0) {
       paletteEl.insertAdjacentHTML('beforeend', `<div class="palette-section-title">Standard</div>`);
@@ -66,6 +67,98 @@ const initPalette = () => {
 
     paletteEl.appendChild(cell);
   });
+};
+
+const initBraillePalette = async () => {
+  const paletteEl = document.getElementById('braille-palette');
+  const statusEl = document.getElementById('selection-status');
+  
+  try {
+    const response = await fetch('private/braille.json');
+    brailleData = await response.json();
+    
+    paletteEl.innerHTML = '';
+    
+    // Sort keys numerically
+    const keys = Object.keys(brailleData).sort((a, b) => parseInt(a) - parseInt(b));
+    
+    keys.forEach(dotCount => {
+      const chars = brailleData[dotCount];
+      if (!chars || chars.length === 0) return;
+
+      const group = document.createElement('div');
+      group.className = 'braille-group';
+      
+      const title = document.createElement('div');
+      title.className = 'braille-group-title';
+      title.textContent = `${dotCount} Dots`;
+      group.appendChild(title);
+      
+      const grid = document.createElement('div');
+      grid.className = 'braille-grid';
+      
+      // Each character is a cell
+      chars.split('').forEach(char => {
+        const cell = document.createElement('div');
+        cell.className = 'braille-cell';
+        cell.textContent = char;
+        cell.title = `${dotCount} dots`;
+        
+        cell.addEventListener('click', () => {
+          if (currentMode === 'edit' && selectedSpan) {
+            selectedSpan.textContent = char;
+          }
+        });
+        
+        grid.appendChild(cell);
+      });
+      
+      group.appendChild(grid);
+      paletteEl.appendChild(group);
+    });
+    
+    updateEditPaletteState();
+    
+  } catch (error) {
+    console.error('Failed to load braille data:', error);
+    paletteEl.innerHTML = '<div class="error">Failed to load Braille data.</div>';
+  }
+};
+
+const updateEditPaletteState = () => {
+  const paletteEl = document.getElementById('braille-palette');
+  const statusEl = document.getElementById('selection-status');
+  
+  if (selectedSpan) {
+    paletteEl.classList.remove('disabled-palette');
+    statusEl.innerHTML = `Editing character: <span style="font-size: 1.5rem; vertical-align: middle; margin-left: 5px;">${selectedSpan.textContent}</span>`;
+    statusEl.classList.add('has-selection');
+  } else {
+    paletteEl.classList.add('disabled-palette');
+    statusEl.textContent = 'Select a character in the display to edit';
+    statusEl.classList.remove('has-selection');
+  }
+};
+
+const switchMode = (mode) => {
+  currentMode = mode;
+  
+  // Update tabs
+  document.querySelectorAll('.mode-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.mode === mode);
+  });
+  
+  // Update content visibility
+  document.querySelectorAll('.mode-content').forEach(content => {
+    content.classList.toggle('active', content.id === `${mode}-mode-content`);
+  });
+  
+  // Clear selection if switching back to color
+  if (mode === 'color' && selectedSpan) {
+    selectedSpan.classList.remove('selected-char');
+    selectedSpan = null;
+    updateEditPaletteState();
+  }
 };
 
 const renderText = (text) => {
@@ -113,13 +206,27 @@ const renderText = (text) => {
           }
 
           span.addEventListener('mousedown', (e) => {
-            isPainting = true;
-            span.style.color = ansiColors[activeColorId];
-            span.dataset.ansi = activeColorId;
+            if (currentMode === 'color') {
+              isPainting = true;
+              span.style.color = ansiColors[activeColorId];
+              span.dataset.ansi = activeColorId;
+            } else {
+              // Edit mode selection
+              if (selectedSpan) {
+                selectedSpan.classList.remove('selected-char');
+              }
+              if (selectedSpan === span) {
+                selectedSpan = null;
+              } else {
+                selectedSpan = span;
+                span.classList.add('selected-char');
+              }
+              updateEditPaletteState();
+            }
           });
 
           span.addEventListener('mouseover', (e) => {
-            if (isPainting) {
+            if (currentMode === 'color' && isPainting) {
               span.style.color = ansiColors[activeColorId];
               span.dataset.ansi = activeColorId;
             }
@@ -250,5 +357,11 @@ fetch('default_load.txt')
     // Leave placeholder active
   });
 
+// Mode Tab Listeners
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => switchMode(tab.dataset.mode));
+});
+
 initPalette();
+initBraillePalette();
 setupDragAndDrop();
