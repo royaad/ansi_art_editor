@@ -256,9 +256,10 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
     if (currentMode === 'edit') {
       const newSpan = createCharSpan('⠀');
-      selectedSpan.after(newSpan);
-      // Selection advances to the right
-      selectChar(newSpan);
+      selectedSpan.before(newSpan);
+      
+      // The original selection naturally "advances" by staying on the shifted character
+      updateEditPaletteState();
     } else if (currentMode === 'color') {
       // Apply color to current selection
       selectedSpan.style.color = ansiColors[activeColorId];
