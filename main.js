@@ -140,6 +140,54 @@ const updateEditPaletteState = () => {
   }
 };
 
+const selectChar = (span) => {
+  if (selectedSpan) {
+    selectedSpan.classList.remove('selected-char');
+  }
+  
+  if (selectedSpan === span) {
+    selectedSpan = null;
+  } else {
+    selectedSpan = span;
+    if (selectedSpan) {
+      selectedSpan.classList.add('selected-char');
+      selectedSpan.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    }
+  }
+  
+  updateEditPaletteState();
+};
+
+const createCharSpan = (char, colorId = null) => {
+  const span = document.createElement('span');
+  span.textContent = char;
+  
+  if (colorId !== null) {
+    span.style.color = ansiColors[colorId];
+    span.dataset.ansi = parseInt(colorId, 10);
+  }
+
+  span.addEventListener('mousedown', (e) => {
+    if (currentMode === 'color') {
+      isPainting = true;
+      span.style.color = ansiColors[activeColorId];
+      span.dataset.ansi = activeColorId;
+    }
+    
+    // Shared selection behavior
+    selectChar(span);
+  });
+
+  span.addEventListener('mouseover', (e) => {
+    if (currentMode === 'color' && isPainting) {
+      span.style.color = ansiColors[activeColorId];
+      span.dataset.ansi = activeColorId;
+    }
+  });
+
+  return span;
+};
+
 const switchMode = (mode) => {
   currentMode = mode;
   
@@ -152,14 +200,111 @@ const switchMode = (mode) => {
   document.querySelectorAll('.mode-content').forEach(content => {
     content.classList.toggle('active', content.id === `${mode}-mode-content`);
   });
-  
-  // Clear selection if switching back to color
-  if (mode === 'color' && selectedSpan) {
-    selectedSpan.classList.remove('selected-char');
-    selectedSpan = null;
-    updateEditPaletteState();
-  }
+
+  updateEditPaletteState();
 };
+
+window.addEventListener('keydown', (e) => {
+  if (!selectedSpan) return;
+
+  // Arrow Navigation (Both Modes)
+  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+    e.preventDefault();
+    let next = null;
+
+    if (e.key === 'ArrowLeft') {
+      next = selectedSpan.previousElementSibling;
+      if (!next) {
+        const prevLine = selectedSpan.parentElement.previousElementSibling;
+        if (prevLine && prevLine.classList.contains('line')) {
+          next = prevLine.lastElementChild;
+        }
+      }
+    } else if (e.key === 'ArrowRight') {
+      next = selectedSpan.nextElementSibling;
+      if (!next) {
+        const nextLine = selectedSpan.parentElement.nextElementSibling;
+        if (nextLine && nextLine.classList.contains('line')) {
+          next = nextLine.firstElementChild;
+        }
+      }
+    } else if (e.key === 'ArrowUp') {
+      const line = selectedSpan.parentElement;
+      const index = Array.from(line.children).indexOf(selectedSpan);
+      const prevLine = line.previousElementSibling;
+      if (prevLine && prevLine.classList.contains('line')) {
+        next = prevLine.children[Math.min(index, prevLine.children.length - 1)];
+      }
+    } else if (e.key === 'ArrowDown') {
+      const line = selectedSpan.parentElement;
+      const index = Array.from(line.children).indexOf(selectedSpan);
+      const nextLine = line.nextElementSibling;
+      if (nextLine && nextLine.classList.contains('line')) {
+        next = nextLine.children[Math.min(index, nextLine.children.length - 1)];
+      }
+    }
+
+    if (next && next.tagName === 'SPAN') {
+      selectChar(next);
+    }
+    return;
+  }
+
+  // Edit Mode Specific Keys
+  if (currentMode === 'edit') {
+    if (e.key === ' ') {
+      e.preventDefault();
+      const newSpan = createCharSpan('⠀');
+      selectedSpan.after(newSpan);
+      
+      // Selection advances to the right
+      selectChar(newSpan);
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+      const toDelete = selectedSpan.previousElementSibling;
+      if (toDelete && toDelete.tagName === 'SPAN') {
+        toDelete.remove();
+        updateEditPaletteState();
+      } else {
+        // At start of line, merge with previous line
+        const currentLine = selectedSpan.parentElement;
+        const prevLine = currentLine.previousElementSibling;
+        if (prevLine && prevLine.classList.contains('line')) {
+          // Move all spans from current line to the end of the previous line
+          const spans = Array.from(currentLine.children);
+          spans.forEach(span => prevLine.appendChild(span));
+          currentLine.remove();
+          // selection remains on the same span (now part of prevLine)
+          updateEditPaletteState();
+        }
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const currentLine = selectedSpan.parentElement;
+      const newLine = document.createElement('div');
+      newLine.className = 'line';
+      
+      // Move all elements from selectedSpan onwards to the new line
+      let toMove = [selectedSpan];
+      let sibling = selectedSpan.nextElementSibling;
+      while (sibling) {
+        toMove.push(sibling);
+        sibling = sibling.nextElementSibling;
+      }
+      
+      toMove.forEach(span => newLine.appendChild(span));
+      currentLine.after(newLine);
+      
+      // selection remains on selectedSpan (now at start of newLine)
+      updateEditPaletteState();
+    } else {
+      // Ignore all other keys in Edit mode
+      if (e.key.length === 1) {
+        e.preventDefault();
+      }
+    }
+  }
+});
 
 const renderText = (text) => {
   const editorEl = document.getElementById('editor');
@@ -197,41 +342,7 @@ const renderText = (text) => {
         const textSegment = parts[i];
         for (let j = 0; j < textSegment.length; j++) {
           const char = textSegment[j];
-          const span = document.createElement('span');
-          span.textContent = char;
-          
-          if (currentColorId !== null) {
-            span.style.color = ansiColors[currentColorId];
-            span.dataset.ansi = parseInt(currentColorId, 10);
-          }
-
-          span.addEventListener('mousedown', (e) => {
-            if (currentMode === 'color') {
-              isPainting = true;
-              span.style.color = ansiColors[activeColorId];
-              span.dataset.ansi = activeColorId;
-            } else {
-              // Edit mode selection
-              if (selectedSpan) {
-                selectedSpan.classList.remove('selected-char');
-              }
-              if (selectedSpan === span) {
-                selectedSpan = null;
-              } else {
-                selectedSpan = span;
-                span.classList.add('selected-char');
-              }
-              updateEditPaletteState();
-            }
-          });
-
-          span.addEventListener('mouseover', (e) => {
-            if (currentMode === 'color' && isPainting) {
-              span.style.color = ansiColors[activeColorId];
-              span.dataset.ansi = activeColorId;
-            }
-          });
-          
+          const span = createCharSpan(char, currentColorId);
           lineContainer.appendChild(span);
         }
       }
