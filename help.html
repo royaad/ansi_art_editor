@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tool Help – Edit & Color Modes</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1, h2, h3 {
+      margin-top: 1.6em;
+    }
+    h1 {
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0.3em;
+    }
+    ul {
+      margin-left: 1.4em;
+    }
+    .note {
+      background: #f5f7fa;
+      border-left: 4px solid #5b8def;
+      padding: 12px 16px;
+      margin: 16px 0;
+    }
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<p>
+This page describes how the tool behaves in <strong>Color</strong> and
+<strong>Edit</strong> modes, including keyboard controls, cursor navigation,
+and reset actions.
+</p>
+
+
+<h2>Modes Overview</h2>
+
+<h3>Color Mode</h3>
+<ul>
+  <li>The palette displays colors.</li>
+  <li>Characters cannot be inserted, deleted, or structurally modified.</li>
+  <li>Keyboard navigation is enabled for selection only.</li>
+</ul>
+
+<h3>Edit Mode</h3>
+<ul>
+  <li>The palette displays Braille characters.</li>
+  <li>Characters and line structure can be edited.</li>
+  <li>Keyboard input is restricted to specific editing keys.</li>
+</ul>
+
+
+<h2>Keyboard Navigation (Both Modes)</h2>
+
+<p>
+Keyboard navigation behaves the same in both Color and Edit modes.
+Navigation <strong>only changes the current selection</strong> and never
+moves, reorders, inserts, or deletes characters.
+</p>
+
+<ul>
+  <li><code>Arrow Left</code> / <code>Arrow Right</code> — move selection horizontally</li>
+  <li><code>Arrow Up</code> / <code>Arrow Down</code> — move selection vertically based on layout</li>
+</ul>
+
+<div class="note">
+  The underlying text content never changes when using arrow keys.
+  Only the selection cursor moves.
+</div>
+
+
+<h2>Edit Mode: Keyboard Editing Behavior</h2>
+
+<h3>Spacebar (Insert Braille “0”)</h3>
+<ul>
+  <li>Pressing <code>Space</code> inserts a Braille <strong>“0” character</strong>.</li>
+  <li>The character is inserted <strong>to the left of the cursor</strong>.</li>
+  <li>All existing text is pushed to the right.</li>
+  <li>The cursor advances one position to the right and ends up after the inserted character.</li>
+  <li>Space never replaces an existing character.</li>
+</ul>
+
+<h3>Backspace (Delete)</h3>
+<ul>
+  <li>Deletes the character immediately <strong>to the left of the cursor</strong>.</li>
+  <li>The cursor moves left after deletion.</li>
+  <li>Deletion behaves like a normal notepad:
+    <ul>
+      <li>If at the start of a line, the line merges with the previous line.</li>
+      <li>Deletion continues seamlessly across line boundaries.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>Enter (Line Break)</h3>
+<ul>
+  <li>Pressing <code>Enter</code> inserts a line break.</li>
+  <li>The current line is split at the cursor.</li>
+  <li>Text to the right of the cursor moves to the new line.</li>
+  <li>The cursor moves to the beginning of the new line.</li>
+</ul>
+
+<div class="note">
+  Edit mode follows standard text‑editor (notepad‑style) semantics,
+  with the only exception being Space inserting a Braille “0” character.
+</div>
+
+
+<h2>Color Mode: Keyboard Behavior</h2>
+
+<h3>Spacebar (Apply Color)</h3>
+<ul>
+  <li>Pressing <code>Space</code> applies the currently selected color.</li>
+  <li>The color is applied to the currently selected character(s).</li>
+  <li>No text insertion, deletion, or structural change occurs.</li>
+</ul>
+
+
+<h2>Reset Actions</h2>
+
+<h3>Reset Colors</h3>
+<ul>
+  <li>Resets colors only.</li>
+  <li>Text content, characters, and line structure are not affected.</li>
+  <li>This behavior is correct and unchanged.</li>
+</ul>
+
+<h3>Reset Edits</h3>
+<ul>
+  <li>Resets <strong>only Edit‑mode changes</strong>.</li>
+  <li>Reverts:
+    <ul>
+      <li>Character insertions</li>
+      <li>Character deletions</li>
+      <li>Line breaks</li>
+    </ul>
+  </li>
+  <li>Colors are preserved exactly as they are.</li>
+  <li>Reset Edits does not affect Reset Colors.</li>
+</ul>
+
+
+<h2>Summary</h2>
+
+<ul>
+  <li>Arrow keys always navigate selection only.</li>
+  <li>Edit mode enables text editing with restricted keys.</li>
+  <li>Color mode enables coloring without changing text.</li>
+  <li>Reset actions are fully separated between color and text.</li>
+</ul>
+
+</body>
+</html>

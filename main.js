@@ -514,3 +514,39 @@ document.querySelectorAll('.mode-tab').forEach(tab => {
 initPalette();
 initBraillePalette();
 setupDragAndDrop();
+
+// Help Sidebar Logic
+const fetchHelpContent = async () => {
+  const area = document.getElementById('help-content-area');
+  if (!area) return;
+  
+  try {
+    const response = await fetch('help.html');
+    const html = await response.text();
+    const bodyMatch = html.match(/<body>([\s\S]*)<\/body>/i);
+    if (bodyMatch && bodyMatch[1]) {
+      area.innerHTML = bodyMatch[1];
+    }
+  } catch (error) {
+    console.error('Failed to load help content:', error);
+    area.innerHTML = '<p>Error loading documentation.</p>';
+  }
+};
+
+const helpBtn = document.getElementById('help-btn');
+if (helpBtn) {
+  helpBtn.addEventListener('click', () => {
+    const sidebar = document.getElementById('help-sidebar');
+    if (sidebar) sidebar.classList.add('open');
+  });
+}
+
+const closeHelpBtn = document.getElementById('close-help');
+if (closeHelpBtn) {
+  closeHelpBtn.addEventListener('click', () => {
+    const sidebar = document.getElementById('help-sidebar');
+    if (sidebar) sidebar.classList.remove('open');
+  });
+}
+
+fetchHelpContent();

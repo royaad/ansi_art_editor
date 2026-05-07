@@ -114,6 +114,13 @@ header h1 {
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
+.btn.help-btn {
+  width: 40px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+}
+
 main {
   display: flex;
   flex: 1;
@@ -433,4 +440,97 @@ main {
   opacity: 0.5;
   pointer-events: none;
   filter: grayscale(1);
+}
+
+/* Help Sidebar */
+.help-sidebar {
+  position: fixed;
+  top: 1rem;
+  right: -450px;
+  width: 400px;
+  height: calc(100vh - 2rem);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 1.5rem;
+}
+
+.help-sidebar.open {
+  right: 1rem;
+}
+
+.help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--panel-border);
+  padding-bottom: 1rem;
+}
+
+.help-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: white;
+}
+
+.help-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.help-content::-webkit-scrollbar {
+  width: 6px;
+}
+.help-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+/* Help content inner styling */
+.help-content h1, .help-content h2, .help-content h3 {
+  color: white;
+  margin-top: 1.5rem;
+}
+.help-content h1 { font-size: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
+.help-content h2 { font-size: 1.2rem; color: var(--accent); }
+.help-content h3 { font-size: 1rem; }
+.help-content p { margin: 1rem 0; }
+.help-content ul { padding-left: 1.25rem; margin: 1rem 0; }
+.help-content li { margin-bottom: 0.5rem; }
+.help-content code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+.help-content .note {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 3px solid var(--accent);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.help-content hr {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin: 2rem 0;
 }

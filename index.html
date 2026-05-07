@@ -28,6 +28,9 @@
         <button id="download-btn" class="btn primary">
           <i class="fas fa-download"></i> Download ANSI
         </button>
+        <button id="help-btn" class="btn help-btn" title="Help">
+          <i class="fas fa-question"></i>
+        </button>
       </div>
     </header>
     
@@ -78,6 +81,17 @@
       </aside>
     </main>
   </div>
+
+  <div id="help-sidebar" class="help-sidebar glass-panel">
+    <div class="help-header">
+      <h2>Documentation</h2>
+      <button id="close-help" class="close-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="help-content-area" class="help-content">
+      <!-- Loaded from help.html -->
+    </div>
+  </div>
+
   <script src="./main.js" type="module"></script>
 </body>
 </html>
